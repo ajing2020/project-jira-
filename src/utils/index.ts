@@ -3,9 +3,12 @@ import { useEffect, useState } from 'react'
 export const isFalsy = (value: unknown) => (value === 0 ? false : !value)
 
 //在函数中改变传入的对象是不好的
-export const cleanObject = (object: Object) => {
-  const result = { ...object }
-  Object.keys(result).forEach((key) => {
+interface resObj {
+  [key: string]: any
+}
+export const cleanObject = (object: object) => {
+  const result: resObj = { ...object }
+  Object.keys(result).forEach((key: string) => {
     const value = result[key]
     if (isFalsy(value)) {
       delete result[key]
@@ -32,4 +35,19 @@ export const useDebounce = <V>(value: V, delay?: number) => {
   }, [value, delay])
 
   return debouncedValue
+}
+export const useArray = <T>(initialArray: T[]) => {
+  const [value, setValue] = useState(initialArray)
+
+  return {
+    value,
+    setValue,
+    add: (item: T) => setValue([...value, item]),
+    clear: () => setValue([]),
+    removeIndex: (index: number) => {
+      const copy = [...value]
+      copy.splice(index, 1)
+      setValue(copy)
+    }
+  }
 }
