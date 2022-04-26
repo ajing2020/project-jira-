@@ -10,6 +10,7 @@
     "@types/node": "^16.7.13",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
+    "jira-dev-tool": "^1.7.61",
     "json-server": "^0.17.0",
     "lint-staged": "^12.4.0",
     "mrm": "2",
@@ -24,8 +25,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "json-server": "json-server --watch __json_server-mock__/db.json --port 3001 --middlewares ./__json_server-mock__/middlewares.js"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
@@ -45,5 +45,8 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "msw": {
+    "workerDirectory": "public"
+  }
 }
