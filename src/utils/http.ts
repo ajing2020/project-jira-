@@ -47,6 +47,8 @@ export const http = async (
 
 export const useHttp = () => {
   const { user } = useAuth()
+  //Parameters就是一个 utility type 用法： 通过泛型传入一个其他的类型，然后utility tyep 对他进行某种操作
+  //Parameters获得一个函数类型，然后能读出函数类型的参数的类型 
   return (...[endpoint, config]: Parameters<typeof http>) =>
     http(endpoint, { ...config, token: user?.token })
 }
