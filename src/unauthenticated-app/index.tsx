@@ -9,11 +9,12 @@ import right from 'assets/right.svg'
 
 export const UnauthenticatedApp = () => {
   const [isRegister, setIsRegister] = useState(false)
-  const [error, setError] = useState<Error | null >(null)
+  const [error, setError] = useState<Error | null>(null)
   return (
     <Container>
       <Header />
       <Background />
+      <Button>抛出异常</Button>
       <ShadowCard>
         <Title>{isRegister ? '请注册' : '请登录'}</Title>
         {error ? (
