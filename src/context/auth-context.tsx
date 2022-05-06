@@ -3,6 +3,8 @@ import * as auth from 'authProvider'
 import { User } from 'screens/project-list/SearchPanel'
 import { http } from 'utils/http'
 import { useMount } from 'utils'
+import { useAsync } from 'utils/useAsync'
+import { FullPageErrorFallbak, FullPageLading } from 'components/lib'
 
 const bootstrapUser = async () => {
   let user = null
@@ -32,7 +34,15 @@ interface AuthForm {
 
 // 主要数据处理逻辑
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null)
+  const {
+    data: user,
+    error,
+    isLoading,
+    isIdle,
+    isError,
+    run,
+    setData: setUser
+  } = useAsync<User | null>()
 
   // 调用接口获取数据
   // const login = (form:AuthForm) => auth.login(form).then(user => setUser(user))
@@ -43,8 +53,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => auth.logout().then(() => setUser(null))
 
   useMount(() => {
-    bootstrapUser().then(setUser)
+    run(bootstrapUser())
   })
+
+  if (isIdle || isLoading) {
+    return <FullPageLading />
+  }
+
+  if (isError) {
+    return <FullPageErrorFallbak error={error} />
+  }
 
   return (
     <AuthContext.Provider
