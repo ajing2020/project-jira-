@@ -12,13 +12,13 @@ interface IdSelectProps
   options?: { name: string; id: number }[]
 }
 
-export const idSelect = (props: IdSelectProps) => {
+export const IdSelect = (props: IdSelectProps) => {
   const { value, onChange, defaultOptionName, options, ...restProps } = props
 
   return (
     <Select
       {...restProps}
-      value={toNumber(value)}
+      value={options?.length ? toNumber(value) : 0}
       onChange={(value) => onChange(toNumber(value) || undefined)}
     >
       {defaultOptionName ? (
