@@ -1,6 +1,5 @@
-import { useState } from 'react'
 import SearchPanel from './SearchPanel'
-import List from './List'
+import { List } from './List'
 import { useDocumentTitle, useDebounce } from 'utils'
 import styled from '@emotion/styled'
 import { Typography } from 'antd'
@@ -12,7 +11,12 @@ export const ProjectListScreen = () => {
   useDocumentTitle('项目列表', false)
 
   const [param, setParam] = useProjectsSearchParams()
-  const { isLoading, error, data: list } = useProjects(useDebounce(param, 2000))
+  const {
+    isLoading,
+    error,
+    data: list,
+    retry
+  } = useProjects(useDebounce(param, 2000))
   const { data: users } = useUsers()
 
   return (
@@ -23,6 +27,7 @@ export const ProjectListScreen = () => {
         <Typography.Text type={'danger'}>{error.message}</Typography.Text>
       ) : null}
       <List
+        refresh={retry}
         loading={isLoading}
         users={users || []}
         dataSource={list || []}
