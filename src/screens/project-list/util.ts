@@ -15,3 +15,17 @@ export const useProjectsSearchParams = () => {
     setParam
   ] as const
 }
+
+// 全局状态Modal（通过url参数）
+export const useProjectModal = () => {
+  const [{ projectCreate }, setProjectCreate] = useUrlQueryParam(['projectCreate'])
+
+  const open = () => setProjectCreate({ projectCreate: true })
+  const close = () => setProjectCreate({ projectCreate: undefined })
+
+  return {
+    projectModalOpen: projectCreate === 'true',
+    open,
+    close,
+  }
+}

@@ -1,6 +1,6 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { URLSearchParamsInit, useSearchParams } from 'react-router-dom'
-import { cleanObject } from 'utils'
+import { cleanObject, subset } from 'utils'
 
 /**
  * 如果你定义了一个变量，满足下面的条件就最好用useMemo和useCallback给包裹住：
@@ -11,16 +11,18 @@ import { cleanObject } from 'utils'
 
 export const useUrlQueryParam = <K extends string>(keys: K[]) => {
   const [searchParams, setSearchParams] = useSearchParams()
+  const [stateKeys] = useState(keys)
+
   return [
     useMemo(
       () =>
-        keys.reduce((prev, key) => {
-          return { ...prev, [key]: searchParams.get(key) || '' }
-        }, {} as { [key in K]: K }),
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      [searchParams]
+        subset(Object.fromEntries(searchParams), stateKeys) as {
+          [key in K]: string
+        },
+      [searchParams, stateKeys]
     ),
     (params: Partial<{ [key in K]: unknown }>) => {
+      // iterator 迭代器: https://codesandbox.io/s/upbeat-wood-bum3j?file=/src/index.js
       const o = cleanObject({
         ...Object.fromEntries(searchParams),
         ...params
@@ -28,4 +30,5 @@ export const useUrlQueryParam = <K extends string>(keys: K[]) => {
       return setSearchParams(o)
     }
   ] as const
+  // 返回tuple(元组)类型，里面的子类型不一样的时候要使用 as const
 }
