@@ -7,7 +7,7 @@ interface PinProps extends React.ComponentProps<typeof Rate> {
 }
 
 export const Pin = (props: PinProps) => {
-  const { checked, onCheckedChange, ...restProps } = props
+  const { checked, onCheckedChange } = props
 
   return (
     <Rate
