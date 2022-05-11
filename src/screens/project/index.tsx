@@ -15,7 +15,12 @@ export const ProjectScreen = () => {
         <Route path={'epic'} element={<EpicScreen />} />
         <Route
           path={'/'}
-          element={<Navigate to={window.location.pathname + '/kanban'} />}
+          element={
+            <Navigate
+              replace={true}
+              to={window.location.pathname + '/kanban'}
+            />
+          }
         />
       </Routes>
     </div>

@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react'
 import * as auth from 'authProvider'
-import { User } from 'screens/project-list/SearchPanel'
+import { User } from 'types/user'
 import { http } from 'utils/http'
 import { useMount } from 'utils'
 import { useAsync } from 'utils/useAsync'
