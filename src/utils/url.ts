@@ -10,7 +10,8 @@ import { cleanObject, subset } from 'utils'
  */
 
 export const useUrlQueryParam = <K extends string>(keys: K[]) => {
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
+  const setSearchParams = useSetUrlSearchParam()
   const [stateKeys] = useState(keys)
 
   return [
@@ -27,8 +28,18 @@ export const useUrlQueryParam = <K extends string>(keys: K[]) => {
         ...Object.fromEntries(searchParams),
         ...params
       }) as URLSearchParamsInit
-      return setSearchParams(o)
+      return setSearchParams(params)
     }
   ] as const
   // 返回tuple(元组)类型，里面的子类型不一样的时候要使用 as const
+}
+export const useSetUrlSearchParam = () => {
+  const [searchParams, setSearchParam] = useSearchParams()
+  return (params: { [key in string]: unknown }) => {
+    const o = cleanObject({
+      ...Object.fromEntries(searchParams),
+      ...params
+    }) as URLSearchParamsInit
+    return setSearchParam(o)
+  }
 }

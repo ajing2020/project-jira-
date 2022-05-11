@@ -1,7 +1,11 @@
 import { Project } from 'screens/project-list/List'
 import { useHttp } from './http'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { useProjectsSearchParams } from 'screens/project-list/util'
+import { QueryKey, useMutation, useQuery } from 'react-query'
+import {
+  useAddConfig,
+  useDeleteConfig,
+  useEditConfig
+} from './use-optimistic-options'
 
 export const useProjects = (param?: Partial<Project>) => {
   const client = useHttp()
@@ -12,11 +16,8 @@ export const useProjects = (param?: Partial<Project>) => {
 }
 
 // 编辑
-export const useEditProject = () => {
+export const useEditProject = (queryKey: QueryKey) => {
   const client = useHttp()
-  const queryClient = useQueryClient()
-  const [searchParams] = useProjectsSearchParams()
-  const queryKey = ['projects', searchParams]
 
   return useMutation(
     (params: Partial<Project>) =>
@@ -24,33 +25,13 @@ export const useEditProject = () => {
         data: params,
         method: 'PATCH'
       }),
-    {
-      onSuccess: () => queryClient.invalidateQueries('projects'),
-      async onMutate(target) {
-        const previousItems = queryClient.getQueryData(queryKey)
-        queryClient.setQueryData(queryKey, (old?: Project[]) => {
-          return (
-            old?.map((item) =>
-              item.id === target.id ? { ...item, ...target } : item
-            ) || []
-          )
-        })
-        return { previousItems }
-      },
-      onError(error, newItem, context) {
-        queryClient.setQueryData(
-          queryKey,
-          (context as { previousItems: Project[] }).previousItems
-        )
-      }
-    }
+    useEditConfig(queryKey)
   )
 }
 
 // 新增
-export const useAddProject = () => {
+export const useAddProject = (queryKey: QueryKey) => {
   const client = useHttp()
-  const queryClient = useQueryClient()
 
   return useMutation(
     (params: Partial<Project>) =>
@@ -58,9 +39,7 @@ export const useAddProject = () => {
         data: params,
         method: 'POST'
       }),
-    {
-      onSuccess: () => queryClient.invalidateQueries('projects')
-    }
+    useAddConfig(queryKey)
   )
 }
 
@@ -71,4 +50,16 @@ export const useProject = (id?: number) => {
   return useQuery(['project', { id }], () => client(`projects/${id}`), {
     enabled: !!id
   })
+}
+
+// 删除
+export const useDeleteProject = (queryKey: QueryKey) => {
+  const client = useHttp()
+  return useMutation(
+    ({ id }: { id: number }) =>
+      client(`projects/${id}`, {
+        method: 'DELETE'
+      }),
+    useDeleteConfig(queryKey)
+  )
 }

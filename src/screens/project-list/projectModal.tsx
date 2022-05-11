@@ -4,7 +4,7 @@ import { ErrorBox } from 'components/lib'
 import { UserSelect } from 'components/userSelect'
 import { useEffect } from 'react'
 import { useEditProject, useAddProject } from 'utils/project'
-import { useProjectModal } from './util'
+import { useProjectModal, useProjectsQueryKey } from './util'
 
 interface ProjectModalProps {}
 
@@ -13,7 +13,11 @@ export const ProjectModal: React.FC<ProjectModalProps> = () => {
   const { projectModalOpen, close, editingProject, isLoading } =
     useProjectModal()
   const useMutateProject = editingProject ? useEditProject : useAddProject
-  const { mutateAsync, error, isLoading: mutateLoading } = useMutateProject()
+  const {
+    mutateAsync,
+    error,
+    isLoading: mutateLoading
+  } = useMutateProject(useProjectsQueryKey())
 
   useEffect(() => {
     form.setFieldsValue(editingProject)
@@ -25,11 +29,15 @@ export const ProjectModal: React.FC<ProjectModalProps> = () => {
       close()
     })
   }
+  const closeModal = () => {
+    form.resetFields()
+    close()
+  }
   const title = editingProject ? '编辑项目' : '创建项目'
   return (
     <Drawer
       forceRender={true}
-      onClose={close}
+      onClose={closeModal}
       visible={projectModalOpen}
       width={'100%'}
     >

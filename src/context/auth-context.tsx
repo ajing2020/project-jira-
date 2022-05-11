@@ -5,6 +5,7 @@ import { http } from 'utils/http'
 import { useMount } from 'utils'
 import { useAsync } from 'utils/useAsync'
 import { FullPageErrorFallbak, FullPageLading } from 'components/lib'
+import { useQueryClient } from 'react-query'
 
 const bootstrapUser = async () => {
   let user = null
@@ -44,13 +45,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setData: setUser
   } = useAsync<User | null>()
 
+  const queryClient = useQueryClient()
+
   // 调用接口获取数据
   // const login = (form:AuthForm) => auth.login(form).then(user => setUser(user))
   // const register = (form:AuthForm) => auth.register(form).then(user => setUser(user))
   // point free
   const login = (form: AuthForm) => auth.login(form).then(setUser)
   const register = (form: AuthForm) => auth.register(form).then(setUser)
-  const logout = () => auth.logout().then(() => setUser(null))
+  const logout = () =>
+    auth.logout().then(() => {
+      setUser(null)
+      queryClient.clear()
+    })
 
   useMount(() => {
     run(bootstrapUser())
